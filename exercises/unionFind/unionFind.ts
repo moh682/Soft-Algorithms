@@ -1,4 +1,5 @@
-// import * as fs from 'fs';
+
+import * as colors from 'colors';
 
 interface IUnionFind {
   union(p: number, q: number): void;
@@ -7,72 +8,57 @@ interface IUnionFind {
   count(): number;
 }
 
-class UnionFind implements IUnionFind {
+export class UnionFind implements IUnionFind {
   private pointSets: number[] = [];
-  private _count: number = undefined;
+  private sizeOfUnion: number = undefined;
+  private valuesToUnify: number[][] = undefined;
 
-  public constructor(n: number) {
-    this._count = n;
-    for (let i = 0; i < n; i++) {
+
+  public constructor(sizeOfUnion: number, valuesAsArray: number[][]) {
+
+    console.log(`size: ${colors.green(String(sizeOfUnion))}`);
+    console.log(`Times to unify: ${colors.green(String(valuesAsArray.length))}`)
+
+    this.sizeOfUnion = sizeOfUnion;
+    this.valuesToUnify = valuesAsArray;
+    for (let i = 0; i < sizeOfUnion; i++) {
       this.pointSets[i] = i
     }
   }
 
-  public union(p: number, q: number): void {
-    const p_value = this.find(p);
-    const q_value = this.find(q);
-    this.pointSets[q] = this.pointSets[p];
-    for (let i: number = 0; i < this.pointSets.length; i++) {
-      if (this.find[i] === p_value) {
-        this.pointSets[i] = q_value;
-      }
-      this._count--;
+  public run(): void {
+    console.time();
+
+    for (let i = 0; i < this.valuesToUnify.length; i++) {
+      this.union(this.valuesToUnify[i][0], this.valuesToUnify[i][1]);
+    }
+
+    console.table(this.pointSets)
+    console.timeEnd()
+  }
+
+  // Unify point2 to point1
+  public union(point1: number, point2: number): void {
+    const p1 = this.find(point1);
+    const p2 = this.find(point2)
+    for (let i = 0; i < this.sizeOfUnion; i++) {
+      if (this.find(i) === p2) this.pointSets[i] = p1;
     }
   }
 
-  public find(p: number): number {
-    return this.pointSets[p]
+  public find(index: number): number {
+    return this.pointSets[index]
   }
 
   public connected(p: number, q: number): boolean {
     return this.find(p) === this.find(q);
   }
 
-
   public count(): number {
-    return this._count;
+    return this.sizeOfUnion;
   }
 
   public printArray(): string {
     return `array: ${this.pointSets}`;
   }
 }
-
-(async () => {
-  // const smallFile: string = await fs.readFileSync(__dirname + '/resources/tinyUF.txt', 'utf8');
-  // const array = smallFile.split(/\s/);
-  // array.pop();
-  // try {
-  //   var numbers = array.map(n => Number(n));
-  // } catch (ex) {
-  // }
-
-  let unionFind = new UnionFind(10);
-
-  await unionFind.union(4, 1);
-  console.log(unionFind.printArray());
-  await unionFind.union(2, 3);
-  console.log(unionFind.printArray());
-  await unionFind.union(1, 4);
-  console.log(unionFind.printArray());
-  await unionFind.union(1, 9);
-  console.log(unionFind.printArray());
-  await unionFind.union(5, 3);
-  console.log(unionFind.printArray());
-  await unionFind.union(7, 6);
-  console.log(unionFind.printArray());
-  await unionFind.union(0, 2);
-  console.log(unionFind.printArray());
-  await unionFind.union(5, 4);
-  console.log(unionFind.printArray());
-})();
