@@ -9,15 +9,18 @@ public class UnionFind implements IUnionFind{
         this.count = sizeOfSet;
         this.pointSet = new int[sizeOfSet];
 
-        // Creates the list of
         for (int i = 0; i < sizeOfSet; i++) {
             this.pointSet[i] = i;
         }
     }
 
+    /**
+     * This is the bad way of working making the algorithm O(n)
+     * @param p
+     * @param q
+     */
     @Override
     public void union(int p, int q) {
-
         int p1 = this.find(p);
         int p2 = this.find(q);
         for (int i = 0; i < this.pointSet.length; i++) {
