@@ -1,4 +1,4 @@
-## Mini Project #4 - Airport Queuing System Algorithms and Datastructure
+## Assignment #4 - Airport Queuing System Algorithms and Datastructure
 
 **Description**
 
