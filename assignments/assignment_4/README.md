@@ -1,6 +1,7 @@
 ## Mini Project #4 - Airport Queuing System Algorithms and Datastructure
 
 **Description**
+
 Implement a priotitized queueing system for an airport. You can use any
 priority queue algorithm, but you must be able to argue that the time complexity is no worse than O(log n) for enqueue and dequeue respectively.
 You should implement the priority queue in a setup that simulates passengers
