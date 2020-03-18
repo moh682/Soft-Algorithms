@@ -8,11 +8,11 @@ arriving to an airport, and passengers passing security.
 
 Passenger priority can be derived from the passenger category and arrival
 time:
-* 1. Late to flight
-* 2. Business class
-* 3. Disabled
-* 4. Family
-* 5. Monkey
+* Late to flight
+* Business class
+* Disabled
+* Family
+* Monkey
 
 A template for such a setup can be found here:
 https://github.com/cphbus-algorithms/airport-template.git
