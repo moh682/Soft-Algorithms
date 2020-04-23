@@ -1,65 +1,91 @@
-
-import * as colors from 'colors';
-
-interface IUnionFind {
-  union(p: number, q: number): void;
-  find(p: number): number;
-  connected(p: number, q: number): boolean;
-  count(): number;
+class Node {
+  public parent: Node;
+  public value: number;
+  public child: Node;
 }
 
-export class UnionFind implements IUnionFind {
-  private pointSets: number[] = [];
-  private sizeOfUnion: number = undefined;
-  private valuesToUnify: number[][] = undefined;
+// Default UnionFind
+export class UnionFindDefault {
+  private array: number[] = [];
+  private unions: number = 0;
 
-
-  public constructor(sizeOfUnion: number, valuesAsArray: number[][]) {
-
-    console.log(`size: ${colors.green(String(sizeOfUnion))}`);
-    console.log(`Times to unify: ${colors.green(String(valuesAsArray.length))}`)
-
-    this.sizeOfUnion = sizeOfUnion;
-    this.valuesToUnify = valuesAsArray;
-    for (let i = 0; i < sizeOfUnion; i++) {
-      this.pointSets[i] = i
+  public constructor(ar: number[]) {
+    for (let i = 0; i < ar.length; i++) {
+      this.array[i] = ar[i];
+      this.unions++;
     }
   }
 
-  public run(): void {
-    console.log('is running')
-    console.time('timer');
-    const timer = setInterval(() => console.timeLog('timer'), 3000);
-    for (let i = 0; i < this.valuesToUnify.length; i++) {
-      this.union(this.valuesToUnify[i][0], this.valuesToUnify[i][1]);
-    }
-    console.log(this.pointSets);
-    clearInterval(timer);
-    console.timeEnd('timer')
-  }
-
-  // Unify point2 to point1
   public union(point1: number, point2: number): void {
-    const p1: number = this.find(point1);
-    const p2 = this.find(point2)
-    for (let i = 0; i < this.sizeOfUnion; i++) {
-      if (this.find(i) === p2) this.pointSets[i] = p1;
+    const v1 = this.array[point1];
+    for (let i = 0; i < this.array.length; i++) {
+      if (this.array[i] === this.array[point2]) {
+        this.array[i] = v1;
+      }
     }
+    this.unions--;
   }
 
-  public find(index: number): number {
-    return this.pointSets[index]
+  public findIndex(number: number): number {
+    let index: number;
+    for (let i = 0; i < this.array.length; i++) {
+      if (this.array[i] === number) {
+        index = i;
+        break;
+      }
+    }
+    if (index) return index;
   }
 
   public connected(p: number, q: number): boolean {
-    return this.find(p) === this.find(q);
+    return this.array[p] === this.array[q];
   }
 
-  public count(): number {
-    return this.sizeOfUnion;
+  public getUnions(): number {
+    return this.unions;
   }
 
-  public printArray(): string {
-    return `array: ${this.pointSets}`;
+  public print(): void {
+    console.log('array: ', this.array);
+    console.log('unions: ', this.unions);
+  }
+}
+
+export class UnionFindUpdated {
+  private array: Node[] = [];
+  private unions: number = 0;
+
+  constructor(array: number[]) {
+    for (let i = 0; i < array.length; i++) {
+      const node: Node = new Node();
+      this.array.push(node);
+    }
+  }
+
+  public getRootOf(n: Node): Node {
+    let hasParent: boolean = true;
+    let node = n;
+    while (hasParent) {
+      if (node.parent === undefined) {
+        hasParent = false;
+        break;
+      } else {
+        node = node.parent;
+      }
+    }
+    return node;
+  }
+
+  public connected(p: number, q: number): boolean {
+    return this.array[p] === this.array[q];
+  }
+
+  public getUnions(): number {
+    return this.unions;
+  }
+
+  public print(): void {
+    console.log('array: ', this.array);
+    console.log('unions: ', this.unions);
   }
 }
