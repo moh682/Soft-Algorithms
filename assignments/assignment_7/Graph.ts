@@ -1,6 +1,7 @@
 // ? This is an api for an undirected graph
 
 import { Airport, Route } from './Node';
+import { array } from 'prop-types';
 
 interface Graph {
   getNumberOfAirports: () => number;
@@ -12,6 +13,12 @@ interface Graph {
   isConnectedViaAirlineDFS: (source: string, destination: string, airline: string, visited?: Set<string>) => boolean;
   isConnectedViaAirlineBFS: (source: string, destination: string, airline: string) => boolean;
   getConnectedRoutesToAirport: (source: string) => IterableIterator<Route>;
+  findShortestPathDjistra: (
+    source: string,
+    destination: string,
+    visited?: Set<string>,
+    visitedDistance?: Map<string, number>,
+  ) => IterableIterator<string>;
 }
 
 class Graph implements Graph {
@@ -97,6 +104,90 @@ Graph.prototype.isConnectedViaAirlineBFS = function (source: string, destination
     }
     return true;
   }
+};
+
+Graph.prototype.findShortestPathDjistra = function (
+  source: string,
+  endGoal: string,
+  visitedList?: Set<string>,
+  distanceToVisitedList?: Map<string, number>,
+): IterableIterator<string> {
+  visitedList.add(source);
+	if (distanceToVisitedList.size === 0) distanceToVisitedList.set(source, 0);
+	
+	if(source === endGoal) {
+		return visitedList.values();
+	}
+
+  const airport: Airport = this.airports.get(source);
+
+  let fastestDestination: string = undefined;
+  let currentFastest: number;
+  for (const route of airport.getRoutes()) {
+    // get previous calculated distance
+    const previousCalculatedDistance = distanceToVisitedList.get(route.destination);
+
+    // check if we have visited the route destination before
+    const hasVisited = visitedList.has(route.destination);
+
+    // Distance calculated up till now
+    const sourceDistance = distanceToVisitedList.get(source);
+		let distanceFromCurrentAirport: number = sourceDistance + route.distance;
+		
+		if(previousCalculatedDistance) {
+      // Check if current distance to the destination is faster then previous calculated distance
+      if (distanceFromCurrentAirport < previousCalculatedDistance) {
+        // override the previous calculated distance with the faster one
+        distanceToVisitedList.set(route.destination, distanceFromCurrentAirport);
+			}
+		}else {
+			if (!hasVisited) {
+				// IF the destination was visited before
+	
+				// Set the combined distance to the destination airport
+				distanceToVisitedList.set(route.destination, route.distance + sourceDistance);
+	
+				// Check if the its the first route
+				if (!currentFastest) {
+					// if it is the first route add the route to the fastest
+					currentFastest = distanceFromCurrentAirport;
+					fastestDestination = route.destination;
+				} else {
+					// Check if the routes are the fastest of all the routes of the airport and assign them properly
+					currentFastest = distanceFromCurrentAirport < currentFastest ? distanceFromCurrentAirport : currentFastest;
+					fastestDestination = distanceFromCurrentAirport < currentFastest ? route.destination : fastestDestination;
+				}
+		}
+  }
+
+  return this.findShortestPathDjistra(fastestDestination, endGoal, visitedList, distanceToVisitedList);
+
+  // visited = visited || new Array<string>();
+  // if(visited.length === 0) visited.push(source)
+  // visitedDistance = visitedDistance || new Map().set(source, 0);
+  // array.length
+  // const resultRoute: Array<Route> = new Array();
+
+  // const getShortestRoute = function (airport: Airport): [string, number] {
+  //   let temp: number;
+  // 	let shortestAiportName: string;
+  //   for (let route of airport.getRoutes()) {
+  //     temp = temp || route.distance;
+  // 		shortestAiportName = shortestAiportName || route.destination;
+  // 		if(visited.has(airport.getCode())){
+  // 			visitedDistance[1]
+  // 		}
+  //     if (route.distance < temp) {
+  //       temp = route.distance;
+  //     }
+  //   }
+  //   return [shortestAiportName, temp];
+  // };
+
+  // const currentAirport = this.airports.get(source);
+  // const [airportName, distance] = getShortestRoute(currentAirport);
+
+  // if()
 };
 
 Graph.prototype.getConnectedRoutesToAirport = function (code: string): IterableIterator<Route> {

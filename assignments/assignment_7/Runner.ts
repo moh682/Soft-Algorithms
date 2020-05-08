@@ -20,8 +20,8 @@ function getData() {
 }
 function start() {
   getData();
-  // console.log(graph.isConnectedViaAirlineDFS('OSS', 'FRU', 'QH'));
-  console.log(graph.isConnectedViaAirlineBFS('OSS', 'FRU', 'QH'));
+  console.log(graph.isConnectedViaAirlineDFS('OSS', 'FRU', 'QH'));
+  // console.log(graph.isConnectedViaAirlineBFS('OSS', 'FRU', 'QH'));
   // console.log(graph.getConnectedRoutesToAirport('OSS'));
 }
 start();
